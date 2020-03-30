@@ -1,0 +1,12 @@
+/Users/titorianobroadus/Desktop/DungeonGeneration/bin/Debug/netcoreapp3.1/DungeonGeneration.deps.json
+/Users/titorianobroadus/Desktop/DungeonGeneration/bin/Debug/netcoreapp3.1/DungeonGeneration.runtimeconfig.json
+/Users/titorianobroadus/Desktop/DungeonGeneration/bin/Debug/netcoreapp3.1/DungeonGeneration.runtimeconfig.dev.json
+/Users/titorianobroadus/Desktop/DungeonGeneration/bin/Debug/netcoreapp3.1/DungeonGeneration.dll
+/Users/titorianobroadus/Desktop/DungeonGeneration/bin/Debug/netcoreapp3.1/DungeonGeneration.pdb
+/Users/titorianobroadus/Desktop/DungeonGeneration/obj/Debug/netcoreapp3.1/DungeonGeneration.csprojAssemblyReference.cache
+/Users/titorianobroadus/Desktop/DungeonGeneration/obj/Debug/netcoreapp3.1/DungeonGeneration.csproj.CoreCompileInputs.cache
+/Users/titorianobroadus/Desktop/DungeonGeneration/obj/Debug/netcoreapp3.1/DungeonGeneration.AssemblyInfoInputs.cache
+/Users/titorianobroadus/Desktop/DungeonGeneration/obj/Debug/netcoreapp3.1/DungeonGeneration.AssemblyInfo.cs
+/Users/titorianobroadus/Desktop/DungeonGeneration/obj/Debug/netcoreapp3.1/DungeonGeneration.dll
+/Users/titorianobroadus/Desktop/DungeonGeneration/obj/Debug/netcoreapp3.1/DungeonGeneration.pdb
+/Users/titorianobroadus/Desktop/DungeonGeneration/obj/Debug/netcoreapp3.1/DungeonGeneration.genruntimeconfig.cache
