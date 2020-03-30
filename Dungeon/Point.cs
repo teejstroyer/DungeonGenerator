@@ -1,6 +1,6 @@
 using System;
 
-namespace DungeonGeneration
+namespace Dungeon
 {
   public struct Point
   {

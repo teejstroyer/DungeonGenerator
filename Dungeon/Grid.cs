@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace DungeonGeneration
+namespace Dungeon
 {
     public struct Grid
     {
@@ -18,7 +18,7 @@ namespace DungeonGeneration
         public int Height { get => _grid.GetLength(1); }
         public int Width { get => _grid.GetLength(0); }
 
-        public void GenerateGrid(
+        public char[,] GenerateGrid(
             int width,
             int height,
             int maxRooms = 3,
@@ -41,6 +41,7 @@ namespace DungeonGeneration
             CreateTunnels(randomWalkTunnels: true, triangulatedTunnels: true);
             RemoveUnnecessaryWalls();
             //DecorateRooms();
+            return _grid;
         }
         public void PrintGrid()
         {
@@ -168,7 +169,7 @@ namespace DungeonGeneration
                 rng.Next(1, Height - 1)
                 );
         }
-        private float GetDistance(Point p1, Point p2) => MathF.Sqrt(MathF.Pow(p2.X - p1.X, 2) + MathF.Pow(p2.Y - p1.Y, 2));
+        private float GetDistance(Point p1, Point p2) => (float)Math.Sqrt(Math.Pow(p2.X - p1.X, 2) + Math.Pow(p2.Y - p1.Y, 2));
         private Rect RandomRect()
         {
             Random rng = new Random();

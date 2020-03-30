@@ -1,4 +1,4 @@
-namespace DungeonGeneration
+namespace Dungeon
 {
     public class Rect
     {
