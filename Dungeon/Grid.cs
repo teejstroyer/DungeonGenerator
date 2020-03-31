@@ -14,7 +14,7 @@ namespace Dungeon
         private int MaxRooms;
         private int MinRoomSizeX;
         private int MinRoomSizeY;
-        private int RoomBorderLeniancy;
+        private int RoomBorderLeniency;
         public int Height { get => _grid.GetLength(1); }
         public int Width { get => _grid.GetLength(0); }
 
@@ -27,7 +27,10 @@ namespace Dungeon
             int minRoomSizeY = 3,
             int maxRoomSizeX = 15,
             int maxRoomSizeY = 15,
-            int roomBorderLeniancy = 1)
+            int roomBorderLeniency = 1,
+            bool randomWalkTunnels = false,
+            bool triangulatedTunnels = true
+            )
         {
             MaxRooms = maxRooms;
             MaxRoomTries = maxRoomTries;
@@ -35,11 +38,11 @@ namespace Dungeon
             MinRoomSizeY = minRoomSizeY;
             MaxRoomSizeX = maxRoomSizeX;
             MaxRoomSizeY = maxRoomSizeY;
-            RoomBorderLeniancy = roomBorderLeniancy;
-            CreateGrid(width, height, '#');
+            RoomBorderLeniency = roomBorderLeniency;
+            CreateGrid(width, height, ' ');
             CreateRooms();
-            CreateTunnels(randomWalkTunnels: true, triangulatedTunnels: true);
-            RemoveUnnecessaryWalls();
+            CreateTunnels(randomWalkTunnels: randomWalkTunnels, triangulatedTunnels: triangulatedTunnels);
+            AddWalls();
             //DecorateRooms();
             return _grid;
         }
@@ -72,14 +75,14 @@ namespace Dungeon
         }
         private bool IsValidRect(Rect rect, char val)
         {
-            if (!IsValidPoint(rect.TopLeftPoint.X - RoomBorderLeniancy, rect.TopLeftPoint.Y - RoomBorderLeniancy)
-                || !IsValidPoint(rect.TopLeftPoint.X + rect.Width + RoomBorderLeniancy, rect.TopLeftPoint.Y + rect.Height + RoomBorderLeniancy))
+            if (!IsValidPoint(rect.TopLeftPoint.X - RoomBorderLeniency, rect.TopLeftPoint.Y - RoomBorderLeniency)
+                || !IsValidPoint(rect.TopLeftPoint.X + rect.Width + RoomBorderLeniency, rect.TopLeftPoint.Y + rect.Height + RoomBorderLeniency))
             {
                 return false;
             }
-            for (int y = rect.TopLeftPoint.Y - RoomBorderLeniancy; y < rect.TopLeftPoint.Y + rect.Height + RoomBorderLeniancy; y++)
+            for (int y = rect.TopLeftPoint.Y - RoomBorderLeniency; y < rect.TopLeftPoint.Y + rect.Height + RoomBorderLeniency; y++)
             {
-                for (int x = rect.TopLeftPoint.X - RoomBorderLeniancy; x < rect.TopLeftPoint.X + rect.Width + RoomBorderLeniancy; x++)
+                for (int x = rect.TopLeftPoint.X - RoomBorderLeniency; x < rect.TopLeftPoint.X + rect.Width + RoomBorderLeniency; x++)
                 {
                     var suspect = GetValue(x, y);
                     if (suspect == val || suspect == '!') return false;
@@ -89,18 +92,19 @@ namespace Dungeon
         }
         private bool IsValidEllipse(Ellipse ellipse, char val)
         {
-            ellipse.Radius += RoomBorderLeniancy;
+            ellipse.Radius += RoomBorderLeniency;
+            if (
+                ellipse.Center.X - ellipse.Radius <= 0 ||
+                ellipse.Center.Y - ellipse.Radius <= 0 ||
+                ellipse.Center.X + ellipse.Radius >= Width - 1 ||
+                ellipse.Center.Y + ellipse.Radius >= Height - 1
+            ) return false;
+
             for (int y = ellipse.Center.Y - ellipse.Radius; y < ellipse.Center.Y + ellipse.Radius; y++)
             {
                 for (int x = ellipse.Center.X - ellipse.Radius; x < ellipse.Center.X + ellipse.Radius; x++)
                 {
-                    var dX = x - ellipse.Center.X;
-                    var dY = y - ellipse.Center.Y;
-                    if (dX * dX + dY * dY < (ellipse.Radius * ellipse.Radius))
-                    {
-                        var suspect = GetValue(x, y);
-                        if (suspect == val || suspect == '!') return false;
-                    }
+                    if (GetValue(x, y) == val) return false;
                 }
             }
             return true;
@@ -158,15 +162,15 @@ namespace Dungeon
         }
         private char GetValue(int x, int y)
         {
-            if (!IsValidPoint(x, y)) return '!';
+            if (!IsValidPoint(x, y)) return ' ';
             return _grid[x, y];
         }
         private Point RandomPoint()
         {
             Random rng = new Random();
             return new Point(
-                rng.Next(1, Width - 1),
-                rng.Next(1, Height - 1)
+                rng.Next(2, Width - 2),
+                rng.Next(2, Height - 2)
                 );
         }
         private float GetDistance(Point p1, Point p2) => (float)Math.Sqrt(Math.Pow(p2.X - p1.X, 2) + Math.Pow(p2.Y - p1.Y, 2));
@@ -217,7 +221,6 @@ namespace Dungeon
         }
         private void CreateTunnels(bool randomWalkTunnels, bool triangulatedTunnels)
         {
-            //create start and end point here based on furthest distance 'S' & 'E'
             var pairs = new List<(Point, Point, float)>();
             for (int p1 = 0; p1 < RoomCenters.Count; p1++)
             {
@@ -282,28 +285,31 @@ namespace Dungeon
                 DrawLine(pair.Item2, new Point(pair.Item2.X, pair.Item1.Y));
             }
         }
-        private void RemoveUnnecessaryWalls()
+        private void AddWalls()
         {
-            for (int y = 0; y < Height; y++)
+            for (int y = 1; y < Height - 1; y++)
             {
-                for (int x = 0; x < Width; x++)
+                for (int x = 1; x < Width - 1; x++)
                 {
-                    //if (x == 0 || y == 0 || x == Width - 1 || y == Height - 1) SetValue(x, y, ' '); else
-                    if (
-                        "!# ".Contains(GetValue(x, y - 1)) &&
-                        "!# ".Contains(GetValue(x, y + 1)) &&
-                        "!# ".Contains(GetValue(x - 1, y)) &&
-                        "!# ".Contains(GetValue(x + 1, y)) &&
-                        "!# ".Contains(GetValue(x + 1, y + 1)) &&
-                        "!# ".Contains(GetValue(x + 1, y - 1)) &&
-                        "!# ".Contains(GetValue(x - 1, y + 1)) &&
-                        "!# ".Contains(GetValue(x - 1, y - 1))
-                    )
+                    if (GetValue(x, y) == ' ')
                     {
-                        SetValue(x, y, ' ');
+                        if (
+                            '.' == GetValue(x, y - 1) ||
+                            '.' == GetValue(x, y + 1) ||
+                            '.' == GetValue(x - 1, y) ||
+                            '.' == GetValue(x + 1, y) ||
+                            '.' == GetValue(x + 1, y + 1) ||
+                            '.' == GetValue(x + 1, y - 1) ||
+                            '.' == GetValue(x - 1, y + 1) ||
+                            '.' == GetValue(x - 1, y - 1)
+                        )
+                        {
+                            SetValue(x, y, '#');
+                        }
                     }
                 }
             }
         }
+
     }
 }

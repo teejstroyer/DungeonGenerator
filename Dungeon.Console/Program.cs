@@ -5,19 +5,20 @@ namespace Dungeon.Console
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            //Console.WriteLine("Hello World!");
             var grid = new Grid();
-            var Dungeon = grid.GenerateGrid(width: 50,
-                                            height: 50,
-                                            maxRooms: 3,
-                                            maxRoomTries: 300,
+            var Dungeon = grid.GenerateGrid(width: 100,
+                                            height: 100,
+                                            maxRooms: 15,
+                                            maxRoomTries: 500,
                                             minRoomSizeX: 3,
                                             minRoomSizeY: 3,
                                             maxRoomSizeX: 15,
                                             maxRoomSizeY: 15,
-                                            roomBorderLeniancy: 1);
+                                            roomBorderLeniency: 3,
+                                            randomWalkTunnels: false,
+                                            triangulatedTunnels: true);
             grid.PrintGrid();
         }
     }
